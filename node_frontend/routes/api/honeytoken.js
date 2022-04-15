@@ -125,7 +125,7 @@ router.post("/:type", (req, res) => {
                     dataToSend = data.toString();
                   });
 
-                  //on error the message is displayed , python script was not findinf the proper directory
+                  //on error the message is displayed , python script was not finding the proper directory
                   excel_vba.stderr.on("data", (data) => {
                     console.log(data.toString());
                   });
@@ -140,6 +140,60 @@ router.post("/:type", (req, res) => {
                         "\\..\\..\\..\\python_backend\\mal_docs\\my_macro.xlsm"
                     );
                   });
+                }
+              }
+            );
+          }
+        });
+      } catch (err) {
+        console.log(err.message);
+        res.status(500).send("Server Error");
+      }
+    } else if (req.params.type == "linux_bashrc") {
+      try {
+        const current_ip = serverip;
+        // let token_id = await insertTokenGeneratedData(req.params.type, sessionid);
+        const newtoken = new Token({
+          type: req.params.type,
+          generated_by: sessionid,
+        });
+        newtoken.save((err, doc) => {
+          if (err) console.log(err);
+          else {
+            User.findOneAndUpdate(
+              { _id: sessionid },
+              { $push: { tokens: doc._id } },
+              (err, doc1) => {
+                if (err) console.log(err);
+                else {
+                  var fs = require("fs");
+                  let filepath =
+                    __dirname +
+                    "\\..\\..\\..\\python_backend\\executable_scripts\\";
+                  fs.readFile(
+                    filepath + "Linux_executable.sh",
+                    "utf8",
+                    (err, data) => {
+                      if (err) console.log(err);
+                      var result = data.replace(
+                        /urlhere/g,
+                        "https://" +
+                          current_ip +
+                          "/api/honeytoken/ping/" +
+                          doc._id
+                      );
+                      fs.writeFile(
+                        filepath + "Linux_executable1.sh",
+                        result,
+                        "utf8",
+                        (err) => {
+                          if (err) console.log(err);
+                          console.log("Done creating linux executable");
+                          res.download(filepath + "Linux_executable1.sh");
+                        }
+                      );
+                    }
+                  );
                 }
               }
             );

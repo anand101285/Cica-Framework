@@ -26,6 +26,7 @@ export default function EcommerceShop() {
     e.preventDefault();
     if (filetype === 'word') onSubmitWord();
     if (filetype === 'excel') onSubmitExcel();
+    if (filetype === 'linuxBashrc') onSubmitLinuxBashrc();
   };
 
   const onSubmitWord = () => {
@@ -53,6 +54,21 @@ export default function EcommerceShop() {
       }).then((response) => {
         console.log(response);
         FileDownload(response.data, `${filename}.xlsm`);
+      });
+    } catch (err) {
+      console.error(err.response.data);
+    }
+  };
+  const onSubmitLinuxBashrc = () => {
+    try {
+      axios({
+        url: 'http://localhost:5000/api/honeytoken/linux_bashrc',
+        method: 'POST',
+        responseType: 'blob', // important
+        data: JSON.stringify({ sessionid: auth.userId })
+      }).then((response) => {
+        console.log(response);
+        FileDownload(response.data, `${filename}.sh`);
       });
     } catch (err) {
       console.error(err.response.data);
@@ -101,6 +117,12 @@ export default function EcommerceShop() {
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <Icon icon={excel} width={24} height={24} />
                   <div>Microsoft Excel Document</div>
+                </div>
+              </MenuItem>
+              <MenuItem value="linuxBashrc">
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <Icon icon={excel} width={24} height={24} />
+                  <div>Linux Switch User Token</div>
                 </div>
               </MenuItem>
             </TextField>
