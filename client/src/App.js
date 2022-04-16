@@ -1,4 +1,3 @@
-// routes
 import ProtectedRoute from './protectedroutes';
 import Route from './routes';
 // theme
