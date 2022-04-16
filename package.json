@@ -4,11 +4,11 @@
     "description": "final year project",
     "main": "server.js",
     "scripts": {
-        "start": "npm run dev",
+        "start": "node server.js",
         "server": "nodemon server.js",
         "client": "npm start --prefix client",
         "dev": "concurrently \"npm run server\" \"npm run client\"",
-        "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build"
+        "heroku-postbuild": "cd client && NPM_CONFIG_PRODUCTION=false npm install && npm run build"
     },
     "author": "Ahsan Ashfaq",
     "license": "MIT",
