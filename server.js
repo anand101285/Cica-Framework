@@ -5,8 +5,6 @@ const app = express();
 const path = require("path");
 const mongoose = require("mongoose");
 
-app.get("/", (req, res) => res.send("API Running"));
-
 app.use(express.json({ extended: false }));
 app.use(bodyParser.json());
 
