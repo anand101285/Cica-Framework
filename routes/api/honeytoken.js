@@ -14,8 +14,8 @@ mongoose.connect(url_db, (err) => {
 const User = require("../../models/User");
 const Token = require("../../models/Tokens");
 const TokenAccess = require("../../models/TokenAccess");
-const serverdata = require("serverConfig");
-const serverip = serverdata.url_toping;
+// const serverdata = require("serverConfig");
+const serverip = "counterintelligenceframework.herokuapp.com";
 
 router.post("/:type", (req, res) => {
     //getting the session id from front end user logged in
