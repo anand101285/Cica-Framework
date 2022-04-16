@@ -3,6 +3,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const app = express();
 const path = require("path");
+const mongoose = require("mongoose");
 
 app.get("/", (req, res) => res.send("API Running"));
 
