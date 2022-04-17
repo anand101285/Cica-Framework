@@ -4,7 +4,6 @@ const bodyParser = require("body-parser");
 const app = express();
 const path = require("path");
 const mongoose = require("mongoose");
-
 app.use(express.json({ extended: false }));
 app.use(bodyParser.json());
 
@@ -37,11 +36,6 @@ mongoose.connect(
     (err) => (err ? console.log(err) : console.log("[+] connected to mongo"))
 );
 // const PORT = 5000;
-app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "client", "build", "index.html"));
-});
 
-if (process.env.NODE_ENV == "production") {
-    app.use(express.static("client/build"));
-}
+app.use(express.static(path.join(__dirname, "./client/build")));
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
