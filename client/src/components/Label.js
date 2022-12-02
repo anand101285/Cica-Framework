@@ -1,3 +1,4 @@
+import React from 'react';
 import PropTypes from 'prop-types';
 // material
 import { alpha, styled } from '@mui/material/styles';
@@ -7,20 +8,20 @@ import { alpha, styled } from '@mui/material/styles';
 const RootStyle = styled('span')(({ theme, ownerState }) => {
   const { color, variant } = ownerState;
 
-  const styleFilled = (color) => ({
-    color: theme.palette[color].contrastText,
-    backgroundColor: theme.palette[color].main
+  const styleFilled = (colorStyle) => ({
+    color: theme.palette[colorStyle].contrastText,
+    backgroundColor: theme.palette[colorStyle].main
   });
 
-  const styleOutlined = (color) => ({
-    color: theme.palette[color].main,
+  const styleOutlined = (colorStyle) => ({
+    color: theme.palette[colorStyle].main,
     backgroundColor: 'transparent',
-    border: `1px solid ${theme.palette[color].main}`
+    border: `1px solid ${theme.palette[colorStyle].main}`
   });
 
-  const styleGhost = (color) => ({
-    color: theme.palette[color].dark,
-    backgroundColor: alpha(theme.palette[color].main, 0.16)
+  const styleGhost = (colorStyle) => ({
+    color: theme.palette[colorStyle].dark,
+    backgroundColor: alpha(theme.palette[colorStyle].main, 0.16)
   });
 
   return {

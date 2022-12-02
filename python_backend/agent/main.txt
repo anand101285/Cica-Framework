@@ -1,0 +1,103 @@
+import os
+import re
+import json
+from time import time
+from uuid import getnode as get_mac
+import requests
+from yaml import compose
+def welcome():
+    print(""+
+"██████╗ ██████╗  ██████╗███████╗██████╗ ████████╗ ██╗ ██████╗ ██████╗ ███╗   ██╗\n"+
+"██╔══██╗╚════██╗██╔════╝██╔════╝██╔══██╗╚══██╔══╝███║██╔════╝██╔═████╗████╗  ██║\n"+
+"██║  ██║ █████╔╝██║     █████╗  ██████╔╝   ██║   ╚██║██║     ██║██╔██║██╔██╗ ██║\n"+
+"██║  ██║ ╚═══██╗██║     ██╔══╝  ██╔═══╝    ██║    ██║██║     ████╔╝██║██║╚██╗██║\n"+
+"██████╔╝██████╔╝╚██████╗███████╗██║        ██║    ██║╚██████╗╚██████╔╝██║ ╚████║\n"+
+"╚═════╝ ╚═════╝  ╚═════╝╚══════╝╚═╝        ╚═╝    ╚═╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝ \n")
+#--------------------------------------------------------------------------------
+def out(s):
+    print("[~]"+str(s))
+#--------------------------------------------------------------------------------
+def login(mail,pas,name,mac):
+    url = 'https://counterintelligenceframework.herokuapp.com/honeypot/generate/newapi'
+    myobj = {'macAddress': mac,'email':mail,'password':pas,'systemName':name}
+    x = requests.post(url, json = myobj)
+    res=x.text
+    if "error" in res:
+        out("Login not successfull. Try again with correct Email & Password.")
+        re="Login failed."
+        return re
+    if "ApiKey" in res:
+        chk=json.loads(res)
+        data=str(chk["ApiKey"])
+        return data
+    else:
+        re="failed."
+        return re
+#--------------------------------------------------------------------------------------------------------Is email valid
+def validemail(email):
+    regex = re.compile(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+')
+    if re.fullmatch(regex, email):
+        return True
+    else:
+        return False
+
+#-------------------------------------------------------------------------------------------------
+def dionea():
+    output=os.popen("sudo apt-get -y install docker.io").read()
+    out("Docker Installed...")
+    output=os.popen("sudo docker run -d -p 21:21 -p 443:443 -p 445:445 -v /dionaea/etc:/opt/dionaea/etc:rw -v /dionaea/lib:/opt/dionaea/var/lib:rw -v /dionaea/log:/opt/dionaea/var/log:rw dinotools/dionaea").read()
+    out("Dionea Installed--")
+#---------------------------------------------------------------------------
+def cowrie():
+    out("Donwloading Cowrie File.")
+    
+    os.popen("sudo mkdir /dionia_install").read()
+    os.popen("sudo chmod 777 /dionia_install").read()
+    download_file("http://r.significantbyte.com/dock/docker-compose.yml","/dionia_install/docker-compose.yml")
+    os.popen("sudo chmod 777 /cowrie").read()
+    out("Downloaded.")
+    cwd=os.getcwd()
+    os.chdir("/dionia_install")
+    out(os.popen("sudo apt-get -y install curl").read())
+    command="curl -L \"https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose"
+    out(os.popen(command).read())
+    os.popen("sudo chmod +x /usr/local/bin/docker-compose")
+    out(os.popen("sudo docker-compose up -d").read())
+    out("Cowrie.is.up.")
+    
+#-----------------------------------------------------------------------
+def download_file(url,filename):
+    r = requests.get(url, allow_redirects=True)
+    open(filename, 'wb').write(r.content)
+#----------------------------------------------------------------------------
+def name():
+    name=os.environ['USER']
+    return name
+#--------------------------------------------------------------------------------------------------------Get Mac Address
+def mac():
+    return (':'.join(re.findall('..', '%012x' % get_mac())))
+#--------------------------------------------------------------------------------------------------------Print error
+
+output=os.popen("sudo apt-get update").read()
+welcome()
+out("To close the Agent press- CTRL+C. \n")
+#-----Authorizing the Agent
+token=""
+while(True):
+    mail = input("Enter User Email:")
+    if(validemail(mail)):
+        passw = input("Enter Password:")
+        token=str(login(mail,passw,name(),mac()))
+        if "fail" in token:
+            out(token)
+        else:
+            break
+    else:
+        out("Please Write a Correct Email")
+out("Logged In SuccessFully.")
+out(token)
+dionea()
+cowrie()
+
+
+#----Authenticating the Agent

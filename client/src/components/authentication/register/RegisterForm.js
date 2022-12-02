@@ -1,5 +1,8 @@
-import axios from 'axios';
 import { useState } from 'react';
+
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import * as Yup from 'yup';
 import { Icon } from '@iconify/react';
@@ -11,11 +14,19 @@ import { useNavigate } from 'react-router-dom';
 import { Stack, TextField, IconButton, InputAdornment } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 
+import { USER_REGISTER } from '../../../redux/actions/user';
+
 // ----------------------------------------------------------------------
 
-export default function RegisterForm() {
+const RegisterForm = (props) => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+
+  const registerUser = (values) => {
+    props.USER_REGISTER(values).then(() => {
+      navigate('/dashboard/app', { replace: true });
+    });
+  };
 
   const RegisterSchema = Yup.object().shape({
     firstName: Yup.string()
@@ -37,34 +48,10 @@ export default function RegisterForm() {
     validationSchema: RegisterSchema,
     onSubmit: (values) => {
       registerUser(values);
-      // navigate('/dashboard', { replace: true });
     }
   });
 
   const { errors, touched, handleSubmit, isSubmitting, getFieldProps } = formik;
-
-  const registerUser = (values) => {
-    console.log(values);
-    try {
-      console.log('sending');
-      axios({
-        url: 'http://localhost:5000/api/users/',
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        data: JSON.stringify({
-          firstname: values.firstName,
-          lastname: values.lastName,
-          email: values.email,
-          password: values.password
-        })
-      }).then((response) => {
-        console.log(response.data);
-        navigate('/dashboard', { status: { token: response.data }, replace: true });
-      });
-    } catch (err) {
-      console.error(err.response.data);
-    }
-  };
 
   return (
     <FormikProvider value={formik}>
@@ -122,12 +109,25 @@ export default function RegisterForm() {
             size="large"
             type="submit"
             variant="contained"
-            loading={isSubmitting}
-          >
+            loading={isSubmitting}>
             Register
           </LoadingButton>
         </Stack>
       </Form>
     </FormikProvider>
   );
-}
+};
+
+RegisterForm.propTypes = {
+  USER_REGISTER: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired
+};
+
+const mapStateToProps = (state) => ({
+  user: state.AUTHREDUCER.user
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  USER_REGISTER: bindActionCreators(USER_REGISTER, dispatch)
+});
+export default connect(mapStateToProps, mapDispatchToProps)(RegisterForm);

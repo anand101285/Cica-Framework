@@ -1,0 +1,29 @@
+.rd3t-label__title {
+  fill: #dbdbdb !important;
+  font-weight: 700 !important;
+}
+.rd3t-label__attributes {
+  fill: #d4d4d4 !important;
+  font-size: smaller !important;
+  font-weight: 300 !important;
+}
+.rd3t-node {
+  fill: #0a3450 !important;
+  stroke: #d4d4d4 !important;
+}
+
+.rd3t-leaf-node {
+  fill: transparent !important;
+  stroke: #d4d4d4 !important;
+}
+
+.rd3t-label__attributes tspan {
+  margin-left: -20% !important;
+  margin-top: 5% !important;
+  font-size: smaller !important;
+  font-weight: 300 !important;
+}
+
+.rd3t-link {
+  stroke: #d4d4d4 !important;
+}

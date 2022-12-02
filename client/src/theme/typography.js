@@ -1,7 +1,10 @@
-// ----------------------------------------------------------------------
+/**
+ * Overriding Typography
+ */
 
 function pxToRem(value) {
-  return `${value / 16}rem`;
+  const PXVAL = 16;
+  return `${value / PXVAL}rem`;
 }
 
 function responsiveFontSizes({ sm, md, lg }) {
@@ -18,7 +21,7 @@ function responsiveFontSizes({ sm, md, lg }) {
   };
 }
 
-const FONT_PRIMARY = 'Public Sans, sans-serif';
+const FONT_PRIMARY = 'Expletus Sans';
 
 const typography = {
   fontFamily: FONT_PRIMARY,

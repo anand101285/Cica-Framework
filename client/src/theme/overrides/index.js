@@ -9,7 +9,8 @@ import Backdrop from './Backdrop';
 import Typography from './Typography';
 import IconButton from './IconButton';
 import Autocomplete from './Autocomplete';
-
+import MenuItem from './MenuItem';
+import Dialog from './Dialog';
 // ----------------------------------------------------------------------
 
 export default function ComponentsOverrides(theme) {
@@ -23,6 +24,8 @@ export default function ComponentsOverrides(theme) {
     Backdrop(theme),
     Typography(theme),
     IconButton(theme),
-    Autocomplete(theme)
+    Autocomplete(theme),
+    MenuItem(theme),
+    Dialog(theme)
   );
 }

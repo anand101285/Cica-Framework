@@ -1,3 +1,4 @@
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
 // material
@@ -20,35 +21,35 @@ const HeaderStyle = styled('header')(({ theme }) => ({
   position: 'absolute',
   padding: theme.spacing(3),
   justifyContent: 'space-between',
-  [theme.breakpoints.up('md')]: {
+  [theme.breakpoints.up('lg')]: {
     alignItems: 'flex-start',
     padding: theme.spacing(7, 5, 0, 7)
   }
 }));
 
 // ----------------------------------------------------------------------
-
-AuthLayout.propTypes = {
-  children: PropTypes.node
-};
-
-export default function AuthLayout({ children }) {
+const AuthLayout = ({ children }) => {
   return (
     <HeaderStyle>
       <RouterLink to="/">
         <Logo />
       </RouterLink>
 
-      <MHidden width="smDown">
+      <MHidden width="lgDown">
         <Typography
           variant="body2"
           sx={{
             mt: { md: -2 }
-          }}
-        >
+          }}>
           {children}
         </Typography>
       </MHidden>
     </HeaderStyle>
   );
-}
+};
+
+AuthLayout.propTypes = {
+  children: PropTypes.node
+};
+
+export default AuthLayout;

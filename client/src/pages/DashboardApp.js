@@ -1,152 +1,225 @@
-import axios from 'axios';
-import { useEffect, useState, useContext } from 'react';
-// material
-import { Box, Grid, Container, Typography } from '@mui/material';
-import CircularProgress from '@mui/material/CircularProgress';
-// components
-import Page from '../components/Page';
-import {
-  AppBugReports,
-  AppCurrentVisits,
-  AppWebsiteVisits,
-  AppConversionRates
-} from '../components/_dashboard/app';
+import React, { useEffect, useState } from 'react';
+import socketConnection from 'socket.io-client';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import PropTypes from 'prop-types';
 
-import { AuthContext } from '../context/auth-context';
+import { Grid, Container } from '@mui/material';
+import CustomCard from '../components/_dashboard/app/CustomCard/CustomCard';
+
+import {
+  GET_DASHBOARD_DIONAEA_COUNT,
+  GET_DASHBOARD_WEB_COUNT,
+  GET_DASHBOARD_IPTABLE_COUNT,
+  GET_DASHBOARD_COMPROMISED_BEACONS,
+  GET_DASHBOARD_COUNTRY_INTERACTIONS
+} from '../redux/actions/dashboard';
+
+import { BarChart, LineChart, MapChart, DonutChart } from '../components/_dashboard/app';
+
+import { GET_SMB_DATA, GET_SMB_TIMESTAMPS } from '../redux/actions/smbanalytics';
+import { GET_IP_TABLE_INTERACTIONS } from '../redux/actions/iptable';
+import { GET_WEB_DATA } from '../redux/actions/web';
+
+import Loader from '../components/Loader';
+import { APP_URL } from '../config';
 
 // ----------------------------------------------------------------------
 
-export default function DashboardApp() {
-  const [comp, setcomp] = useState('');
-  const [accessed, setaccessed] = useState('');
-  const [generated, setgenerated] = useState('');
+const DashboardApp = (props) => {
+  const {
+    getSmbCount,
+    getWebCount,
+    getfirewallcount,
+    getCompromisedBeacons,
+    getCountryInteractions,
+    getSmbData,
+    getSmbTimestamps,
+    getWebData,
+    getFirewallInteractions,
+    userData,
+    smbCount,
+    webCount,
+    firewallCount,
+    compromisedBeacons,
+    countryInteractions,
+    smbData,
+    smbTimestamps,
+    webData
+  } = props;
   const [isLoading, setisLoading] = useState(false);
-  const [docx, setdocx] = useState(0);
-  const [xlsm, setexcel] = useState(0);
-
-  const auth = useContext(AuthContext);
-  const { userId } = auth;
-
   useEffect(() => {
-    gettokendata();
-    // getgenerated();
-    // getaccessed();
-  }, [userId]);
-
-  const gettokendata = async () => {
-    setisLoading(true);
-    try {
-      const tokens = await axios({
-        url: `http://localhost:5000/api/database/tokens/stats/${userId}`,
-        method: 'GET'
+    const socket = socketConnection(`${APP_URL}/api/socket`);
+    socket.on('tokenaccesses', () => {
+      getCompromisedBeacons();
+    });
+    setisLoading(false);
+    Promise.all([
+      getSmbCount(),
+      getWebCount(),
+      getfirewallcount(),
+      getCompromisedBeacons(),
+      getCountryInteractions(),
+      getSmbData(),
+      getSmbTimestamps(),
+      getWebData(),
+      getFirewallInteractions()
+    ])
+      .then(() => {
+        console.log('done');
+        setisLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
       });
-      setcomp(tokens.data);
-      const compromised = await axios({
-        url: `http://localhost:5000/api/database/token/generated/${userId}`,
-        method: 'GET'
-      });
-      setaccessed(compromised.data.num_of_access);
-      setisLoading(false);
-    } catch (err) {
-      setisLoading(false);
-    }
-  };
-
-  // const getaccessed = async () => {
-  //   setisLoading(true);
-  //   try {
-
-  //     setisLoading(false);
-  //   } catch (err) {
-  //     setisLoading(false);
-  //     console.error(err);
-  //   }
-  // };
-
-  // const getgenerated = async () => {
-  //   console.log('Hello there');
-  //   setisLoading(true);
-  //   try {
-  //     console.log('sending');
-  //     const GeneratedToken = await axios({
-  //       url: `http://localhost:5000/api/database/token/generated/${userId}`,
-  //       method: 'GET'
-  //     });
-  //     console.log('I am here !!!!');
-  //     console.log('generated', GeneratedToken.data);
-  //     setgenerated(GeneratedToken.data);
-  //     setisLoading(false);
-  //   } catch (err) {
-  //     setisLoading(false);
-  //     console.error(err);
-  //   }
-  // };
-
-  // const getaccessed = async () => {
-  //   setisLoading(true);
-  //   try {
-  //     console.log('sending accessed request ');
-  //     const response = await axios({
-  //       url: `http://localhost:5000/api/database/tokenaccess/count`,
-  //       method: 'GET'
-  //     });
-  //     console.log('accessed', response.data);
-  //     setaccessed(response.data.num_of_access);
-  //     setisLoading(false);
-  //   } catch (err) {
-  //     setisLoading(false);
-  //     console.error(err);
-  //   }
-  // };
-
-  const setdocsState = () => {
-    setdocx(comp.docx);
-  };
-
-  const setexcelState = () => {
-    setexcel(comp.xlsm);
-  };
+  }, [
+    getSmbCount,
+    getWebCount,
+    getfirewallcount,
+    getCompromisedBeacons,
+    getCountryInteractions,
+    getSmbData,
+    getSmbTimestamps,
+    getWebData,
+    getFirewallInteractions,
+    userData.userId
+  ]);
 
   return (
-    <Page title="Dashboard | Minimal-UI">
-      <Container maxWidth="xl">
-        <Box sx={{ pb: 5 }}>
-          <Typography variant="h4">Hi, Welcome back</Typography>
-        </Box>
-        {isLoading === true && (
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center'
-              // alignItems: 'center'
-              // alignContent: 'center'
-            }}
-          >
-            <CircularProgress size={55} thickness={3} />
-            <Typography variant="h6" sx={{ mt: 8, ml: -8 }}>
-              Loading...
-            </Typography>
-          </Box>
-        )}
-        {isLoading === false && (
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={8}>
-              <AppWebsiteVisits />
-            </Grid>
-
-            <Grid item xs={12} md={6} lg={4}>
-              <AppCurrentVisits docx={comp.docx || 0} excel={comp.xlsm || 0} />
-            </Grid>
-
+    <Container maxWidth="xl">
+      {isLoading === true && <Loader />}
+      {isLoading === false && (
+        <>
+          <Grid container spacing={1}>
             <Grid item xs={12} sm={6} md={3}>
-              <AppBugReports num={accessed || 0} />
+              <CustomCard num={firewallCount} name="Total Interactions"></CustomCard>
             </Grid>
-            <Grid item xs={12} md={6} lg={8}>
-              <AppConversionRates />
+            <Grid item xs={12} sm={6} md={3}>
+              <CustomCard num={smbCount} name="SMB Honeypot Attacks "></CustomCard>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <CustomCard num={webCount} name="Web Honeypot Attacks"></CustomCard>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <CustomCard num={compromisedBeacons} name="Compromised Beacons"></CustomCard>
+            </Grid>
+            <Grid item xs={12} md={4} lg={4}>
+              <BarChart
+                title="SMB Attack (Country Based)"
+                data={smbData}
+                datakey={['doc_count']}
+                indexBy={'key'}
+                ytitle={'Number of Attacks'}
+                xtitle={'Countries'}
+                border={true}
+                height={300}
+                textColor={'#ffffffff'}
+                top={30}
+              />
+            </Grid>
+            <Grid item xs={12} md={4} lg={4}>
+              <LineChart
+                title="SMB Attacks (Time Based)"
+                data={[{ id: 'smb', color: 'hsl(174, 70%, 50%)', data: smbTimestamps }]}
+              />
+            </Grid>
+            <Grid item xs={12} md={4} lg={4}>
+              <BarChart
+                title="WEB Attack"
+                data={webData}
+                datakey={['doc_count']}
+                indexBy={'key'}
+                ytitle={'Number of Attacks'}
+                xtitle={'IP Address'}
+                border={true}
+                height={300}
+                textColor={'#ffffffff'}
+                top={30}
+              />
+            </Grid>
+            <Grid item xs={12} md={4} lg={4}>
+              <DonutChart
+                title="Attack Monthly Details"
+                border={true}
+                height={400}
+                textColor={'#ffffffff'}
+                honeypotData={[
+                  {
+                    id: 'smb_data',
+                    label: 'SMB Access',
+                    value: smbCount
+                  },
+                  {
+                    id: 'web_count',
+                    label: 'Web Access',
+                    value: smbCount
+                  },
+                  {
+                    id: 'beacon_count',
+                    label: 'Beacon Access',
+                    value: smbCount
+                  }
+                ]}
+              />
+            </Grid>
+            <Grid item xs={12} md={8} lg={8}>
+              <MapChart
+                title="Honeypot Attack Map"
+                data={countryInteractions}
+                border={true}
+                height={400}
+                itemTextColor={'#ffffff'}
+              />
             </Grid>
           </Grid>
-        )}
-      </Container>
-    </Page>
+        </>
+      )}
+    </Container>
   );
-}
+};
+
+DashboardApp.propTypes = {
+  getSmbCount: PropTypes.func.isRequired,
+  getWebCount: PropTypes.func.isRequired,
+  getfirewallcount: PropTypes.func.isRequired,
+  getCompromisedBeacons: PropTypes.func.isRequired,
+  getCountryInteractions: PropTypes.func.isRequired,
+  getSmbData: PropTypes.func.isRequired,
+  getSmbTimestamps: PropTypes.func.isRequired,
+  getWebData: PropTypes.func.isRequired,
+  getFirewallInteractions: PropTypes.func.isRequired,
+  userData: PropTypes.object.isRequired,
+  smbCount: PropTypes.number.isRequired,
+  webCount: PropTypes.number.isRequired,
+  firewallCount: PropTypes.number.isRequired,
+  compromisedBeacons: PropTypes.number.isRequired,
+  countryInteractions: PropTypes.array.isRequired,
+  smbData: PropTypes.array.isRequired,
+  smbTimestamps: PropTypes.array.isRequired,
+  webData: PropTypes.array.isRequired
+};
+
+const mapStateToProps = (state) => ({
+  userData: state.AUTHREDUCER.user,
+  smbCount: state.DASHBOARDREDUCER.dionaea_count,
+  webCount: state.DASHBOARDREDUCER.web_count,
+  firewallCount: state.DASHBOARDREDUCER.iptable_count,
+  compromisedBeacons: state.DASHBOARDREDUCER.compromised_beacons,
+  countryInteractions: state.DASHBOARDREDUCER.country_interactions,
+  smbData: state.SMBANALYTICSREDUCER.smb_data,
+  smbTimestamps: state.SMBANALYTICSREDUCER.smb_timestamps,
+  webData: state.WEBREDUCER.web
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  getSmbCount: bindActionCreators(GET_DASHBOARD_DIONAEA_COUNT, dispatch),
+  getWebCount: bindActionCreators(GET_DASHBOARD_WEB_COUNT, dispatch),
+  getfirewallcount: bindActionCreators(GET_DASHBOARD_IPTABLE_COUNT, dispatch),
+  getCompromisedBeacons: bindActionCreators(GET_DASHBOARD_COMPROMISED_BEACONS, dispatch),
+  getCountryInteractions: bindActionCreators(GET_DASHBOARD_COUNTRY_INTERACTIONS, dispatch),
+  getSmbData: bindActionCreators(GET_SMB_DATA, dispatch),
+  getSmbTimestamps: bindActionCreators(GET_SMB_TIMESTAMPS, dispatch),
+  getFirewallInteractions: bindActionCreators(GET_IP_TABLE_INTERACTIONS, dispatch),
+  getWebData: bindActionCreators(GET_WEB_DATA, dispatch)
+});
+export default connect(mapStateToProps, mapDispatchToProps)(DashboardApp);

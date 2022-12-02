@@ -1,0 +1,52 @@
+@font-face {
+  font-family: 'Expletus Sans';
+  src: url('./ExpletusSans-VariableFont_wght.ttf') format('truetype');
+}
+
+body {
+  /* background: linear-gradient(to left, #0c0d0e, #020227) !important; */
+  /* background-image: radial-gradient(circle, rgb(100, 111, 136) 1px, #181b908f 1px), */
+  background-image: linear-gradient(to right, #040d1ff7, #082215c9),
+    linear-gradient(rgb(179, 178, 178) 1px, transparent 0),
+    linear-gradient(90deg, rgb(136, 133, 133) 1px, transparent 0);
+  /* url('background.png'); */
+  background-size: 100% 100vh, 2vw 2vw, 2vw 2vw;
+  /* background-size: cover; */
+  /* animation: gradient 120s ease infinite; */
+  height: 100vh;
+  color: white;
+  padding: 20px;
+  font-family: 'Expletus Sans';
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 30%;
+  }
+
+  50% {
+    background-position: 100% 30%;
+  }
+
+  100% {
+    background-position: 0% 30%;
+  }
+}
+
+.css-h9dtnz-MuiTableCell-root {
+  padding: 4px !important;
+}
+
+.blue-button {
+  color: #11aad3;
+  border: 1px solid #11aad3;
+}
+
+.blue-input {
+  color: #ffffff;
+  border: 1px solid #11aad3;
+  border-radius: 5px;
+  background: transparent;
+  padding: 5%;
+  width: 100%;
+}

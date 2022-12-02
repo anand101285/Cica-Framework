@@ -1,3 +1,4 @@
+import React from 'react';
 import PropTypes from 'prop-types';
 // material
 import { Popover } from '@mui/material';
@@ -16,6 +17,7 @@ const ArrowStyle = styled('span')(({ theme }) => ({
     position: 'absolute',
     borderRadius: '0 0 4px 0',
     transform: 'rotate(-135deg)',
+    opacity: 1,
     background: theme.palette.background.paper,
     borderRight: `solid 1px ${alpha(theme.palette.grey[500], 0.12)}`,
     borderBottom: `solid 1px ${alpha(theme.palette.grey[500], 0.12)}`
@@ -24,12 +26,7 @@ const ArrowStyle = styled('span')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-MenuPopover.propTypes = {
-  children: PropTypes.node.isRequired,
-  sx: PropTypes.object
-};
-
-export default function MenuPopover({ children, sx, ...other }) {
+const MenuPopover = ({ children, sx, ...other }) => {
   return (
     <Popover
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -38,6 +35,7 @@ export default function MenuPopover({ children, sx, ...other }) {
         sx: {
           mt: 1.5,
           ml: 0.5,
+          background: '#1d2835 !important',
           overflow: 'inherit',
           boxShadow: (theme) => theme.customShadows.z20,
           border: (theme) => `solid 1px ${theme.palette.grey[500_8]}`,
@@ -45,11 +43,17 @@ export default function MenuPopover({ children, sx, ...other }) {
           ...sx
         }
       }}
-      {...other}
-    >
+      {...other}>
       <ArrowStyle className="arrow" />
 
       {children}
     </Popover>
   );
-}
+};
+
+MenuPopover.propTypes = {
+  children: PropTypes.node.isRequired,
+  sx: PropTypes.object
+};
+
+export default MenuPopover;

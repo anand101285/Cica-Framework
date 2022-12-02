@@ -1,8 +1,11 @@
-import axios from 'axios';
-import { useState, useContext } from 'react';
+import React, { useState } from 'react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import * as Yup from 'yup';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useFormik, Form, FormikProvider } from 'formik';
 import { Icon } from '@iconify/react';
 import eyeFill from '@iconify/icons-eva/eye-fill';
@@ -19,15 +22,19 @@ import {
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 
-import { AuthContext } from '../../../context/auth-context';
+import { USER_LOGIN } from '../../../redux/actions/user';
+
 // ----------------------------------------------------------------------
 
-export default function LoginForm() {
-  const auth = useContext(AuthContext);
-  const [isLoginMode, setIsLoginMode] = useState(true);
-
+const LoginForm = (props) => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+
+  const loginUser = (LoginValues) => {
+    props.USER_LOGIN(LoginValues).then(() => {
+      navigate('/dashboard/app', { replace: true });
+    });
+  };
 
   const LoginSchema = Yup.object().shape({
     email: Yup.string().email('Email must be a valid email address').required('Email is required'),
@@ -43,33 +50,13 @@ export default function LoginForm() {
     validationSchema: LoginSchema,
     onSubmit: (values) => {
       loginUser(values);
-      navigate('/dashboard', { replace: true });
     }
   });
 
-  const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } = formik;
+  const { errors, touched, values, handleSubmit, getFieldProps } = formik;
 
   const handleShowPassword = () => {
     setShowPassword((show) => !show);
-  };
-
-  const loginUser = (values) => {
-    try {
-      axios({
-        url: 'http://localhost:5000/api/auth',
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        data: JSON.stringify({
-          email: values.email,
-          password: values.password
-        })
-      }).then((response) => {
-        auth.login(response.data.userId, response.data.token);
-        // navigate('/dashboard', { status: { token: response.data }, replace: true });
-      });
-    } catch (err) {
-      console.error(err.response.data);
-    }
   };
 
   return (
@@ -117,16 +104,19 @@ export default function LoginForm() {
           </Link>
         </Stack>
 
-        <LoadingButton
-          fullWidth
-          size="large"
-          type="submit"
-          variant="contained"
-          loading={isSubmitting}
-        >
+        <LoadingButton fullWidth size="large" type="submit" variant="contained">
           Login
         </LoadingButton>
       </Form>
     </FormikProvider>
   );
-}
+};
+
+LoginForm.propTypes = {
+  USER_LOGIN: PropTypes.func.isRequired
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  USER_LOGIN: bindActionCreators(USER_LOGIN, dispatch)
+});
+export default connect(null, mapDispatchToProps)(LoginForm);

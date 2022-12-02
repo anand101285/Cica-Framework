@@ -1,0 +1,71 @@
+{
+	"info": {
+		"_postman_id": "a0f54de7-283a-4fdb-859a-98f91ce9038a",
+		"name": "New Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18728441"
+	},
+	"item": [
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"AuthenticationKeyServer\":\"635acf294f3412c03a7aff04\",\r\n\t\"_id\":12\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/token/getUser",
+					"protocol": "http",
+					"host": [
+						"localhost:5000"
+					],
+					"path": [
+						"api",
+						"token",
+						"getUser"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"AuthenticationKeyServer\":\"635acf294f3412c03a7aff04\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/token/getAllUsers",
+					"protocol": "http",
+					"host": [
+						"localhost:5000"
+					],
+					"path": [
+						"api",
+						"token",
+						"getAllUsers"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

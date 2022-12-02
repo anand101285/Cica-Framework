@@ -1,8 +1,10 @@
+import React, { useRef, useState } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
 import { Icon } from '@iconify/react';
-import { useRef, useState, useContext } from 'react';
 import homeFill from '@iconify/icons-eva/home-fill';
-import personFill from '@iconify/icons-eva/person-fill';
-import settings2Fill from '@iconify/icons-eva/settings-2-fill';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 // material
 import { alpha } from '@mui/material/styles';
@@ -10,34 +12,24 @@ import { Button, Box, Divider, MenuItem, Typography, Avatar, IconButton } from '
 // components
 import MenuPopover from '../../components/MenuPopover';
 //
-import account from '../../_mocks_/account';
+// import account from '../../_mocks_/account';
 
-import { AuthContext } from '../../context/auth-context';
+import { USER_LOGOUT } from '../../redux/actions/user';
+import userLogo from './user_logo.png';
 // ----------------------------------------------------------------------
 
 const MENU_OPTIONS = [
   {
     label: 'Home',
     icon: homeFill,
-    linkTo: '/'
-  },
-  {
-    label: 'Profile',
-    icon: personFill,
-    linkTo: '#'
-  },
-  {
-    label: 'Settings',
-    icon: settings2Fill,
-    linkTo: '#'
+    linkTo: '/dashboard/app'
   }
 ];
 
 // ----------------------------------------------------------------------
 
-export default function AccountPopover() {
+const AccountPopover = (props) => {
   const anchorRef = useRef(null);
-  const auth = useContext(AuthContext);
   const [open, setOpen] = useState(false);
 
   const navigate = useNavigate();
@@ -50,7 +42,7 @@ export default function AccountPopover() {
   };
 
   const logoutHandler = () => {
-    auth.logout();
+    props.USER_LOGOUT();
     navigate('/login', { replace: true });
   };
 
@@ -74,23 +66,21 @@ export default function AccountPopover() {
               bgcolor: (theme) => alpha(theme.palette.grey[900], 0.72)
             }
           })
-        }}
-      >
-        <Avatar src={account.photoURL} alt="photoURL" />
+        }}>
+        <Avatar src={userLogo} alt="photoURL" />
       </IconButton>
 
       <MenuPopover
         open={open}
         onClose={handleClose}
         anchorEl={anchorRef.current}
-        sx={{ width: 220 }}
-      >
+        sx={{ width: 220 }}>
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle1" noWrap>
-            {account.displayName}
+            {`${props.user.f_name} ${props.user.l_name}`}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
+            {props.user.email}
           </Typography>
         </Box>
 
@@ -102,8 +92,7 @@ export default function AccountPopover() {
             to={option.linkTo}
             component={RouterLink}
             onClick={handleClose}
-            sx={{ typography: 'body2', py: 1, px: 2.5 }}
-          >
+            sx={{ typography: 'body2', py: 1, px: 2.5 }}>
             <Box
               component={Icon}
               icon={option.icon}
@@ -126,4 +115,19 @@ export default function AccountPopover() {
       </MenuPopover>
     </>
   );
-}
+};
+
+AccountPopover.propTypes = {
+  USER_LOGOUT: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired
+};
+
+const mapStateToProps = (state) => ({
+  user: state.AUTHREDUCER.user
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  USER_LOGOUT: bindActionCreators(USER_LOGOUT, dispatch)
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(AccountPopover);

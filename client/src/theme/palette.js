@@ -86,6 +86,8 @@ const GRADIENTS = {
 };
 
 const CHART_COLORS = {
+  theme: ['rgba(60, 210, 165, 0.85)', 'rgba(255, 255, 255, 0.25)'],
+  grey: ['#43535C'],
   violet: ['#826AF9', '#9E86FF', '#D0AEFF', '#F7D2FF'],
   blue: ['#2D99FF', '#83CFFF', '#A5F3FF', '#CCFAFF'],
   green: ['#2CD9C5', '#60F1C8', '#A4F7CC', '#C0F2DC'],
@@ -105,8 +107,8 @@ const palette = {
   gradients: GRADIENTS,
   chart: CHART_COLORS,
   divider: GREY[500_24],
-  text: { primary: GREY[800], secondary: GREY[600], disabled: GREY[500] },
-  background: { paper: '#fff', default: '#fff', neutral: GREY[200] },
+  text: { primary: GREY[0], secondary: GREY[500], disabled: GREY[400] },
+  background: { paper: 'transparent', default: '#1d2835f2', neutral: GREY[200] },
   action: {
     active: GREY[600],
     hover: GREY[500_8],

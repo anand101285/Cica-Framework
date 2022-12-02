@@ -1,13 +1,9 @@
 {
-  "prettier/prettier": [
-    "error",
-    {
-      "endOfLine": "auto"
-    }
-  ],
+  "semi": true,
+  "tabWidth": 2,
   "printWidth": 100,
   "singleQuote": true,
   "trailingComma": "none",
-  "tabWidth": 2
+  "jsxBracketSameLine": true,
+  "endOfLine": "auto"
 }
-

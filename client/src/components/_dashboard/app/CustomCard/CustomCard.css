@@ -1,0 +1,56 @@
+.cs-card {
+  border-image: url('./Frame.svg') 3%;
+  border-width: 10px;
+  border-style: solid;
+  background-color: rgba(30, 60, 85, 0.26);
+  /* border-image: url('./Frame.svg') 15%;
+  border-width: 20px;
+  border-style: solid; */
+  text-align: center;
+  color: white;
+}
+
+.cs-card:hover,
+.cs-card2:hover {
+  transform: scale(1);
+  transition: all 1s;
+  animation: rotate 4s linear infinite;
+  box-shadow: 3px 3px 9px rgb(143, 202, 204);
+  @keyframes rotate {
+    100% {
+      transform: rotate(1turn);
+    }
+  }
+}
+
+.cs-card2 {
+  border-image: url('./hudborder.svg') 3%;
+  border-width: 10px;
+  border-style: solid;
+  background-color: rgba(30, 60, 85, 0.26);
+  /* border-image: url('./Frame.svg') 15%;
+  border-width: 20px;
+  border-style: solid; */
+  text-align: center;
+  color: white;
+}
+
+.cs-card-child {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.animated-number {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+}
+
+.graph-card {
+  border-image: url('./Frame.svg') 3%;
+  border-width: 10px;
+  border-style: solid;
+}

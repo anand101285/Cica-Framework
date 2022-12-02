@@ -1,11 +1,14 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Icon } from '@iconify/react';
 import { NavLink as RouterLink, matchPath, useLocation } from 'react-router-dom';
 import arrowIosForwardFill from '@iconify/icons-eva/arrow-ios-forward-fill';
 import arrowIosDownwardFill from '@iconify/icons-eva/arrow-ios-downward-fill';
 // material
-import { alpha, useTheme, styled } from '@mui/material/styles';
+import {
+  //  alpha, useTheme,
+  styled
+} from '@mui/material/styles';
 import { Box, List, Collapse, ListItemText, ListItemIcon, ListItemButton } from '@mui/material';
 
 // ----------------------------------------------------------------------
@@ -16,7 +19,7 @@ const ListItemStyle = styled((props) => <ListItemButton disableGutters {...props
     height: 48,
     position: 'relative',
     textTransform: 'capitalize',
-    paddingLeft: theme.spacing(5),
+    paddingLeft: theme.spacing(2.5),
     paddingRight: theme.spacing(2.5),
     color: theme.palette.text.secondary,
     '&:before': {
@@ -29,28 +32,27 @@ const ListItemStyle = styled((props) => <ListItemButton disableGutters {...props
       position: 'absolute',
       borderTopLeftRadius: 4,
       borderBottomLeftRadius: 4,
-      backgroundColor: theme.palette.primary.main
+      backgroundColor: '#05889a'
+    },
+    '&:hover': {
+      backgroundColor: 'rgba(5, 150, 77, 0.08)'
     }
   })
 );
 
-const ListItemIconStyle = styled(ListItemIcon)({
+const ListItemIconStyle = styled(ListItemIcon)(({ theme }) => ({
   width: 22,
   height: 22,
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center'
-});
+  justifyContent: 'center',
+  marginRight: theme.spacing(3)
+}));
 
 // ----------------------------------------------------------------------
 
-NavItem.propTypes = {
-  item: PropTypes.object,
-  active: PropTypes.func
-};
-
-function NavItem({ item, active }) {
-  const theme = useTheme();
+const NavItem = ({ item, active }) => {
+  // const theme = useTheme();
   const isActiveRoot = active(item.path);
   const { title, path, icon, info, children } = item;
   const [open, setOpen] = useState(isActiveRoot);
@@ -60,9 +62,10 @@ function NavItem({ item, active }) {
   };
 
   const activeRootStyle = {
-    color: 'primary.main',
+    color: '#11aad3',
     fontWeight: 'fontWeightMedium',
-    bgcolor: alpha(theme.palette.primary.main, theme.palette.action.selectedOpacity),
+    bgcolor: 'rgba(30, 60, 85, 0.13)',
+    // alpha(theme.palette.primary.main, theme.palette.action.selectedOpacity),
     '&:before': { display: 'block' }
   };
 
@@ -78,8 +81,7 @@ function NavItem({ item, active }) {
           onClick={handleOpen}
           sx={{
             ...(isActiveRoot && activeRootStyle)
-          }}
-        >
+          }}>
           <ListItemIconStyle>{icon && icon}</ListItemIconStyle>
           <ListItemText disableTypography primary={title} />
           {info && info}
@@ -92,19 +94,18 @@ function NavItem({ item, active }) {
 
         <Collapse in={open} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            {children.map((item) => {
-              const { title, path } = item;
-              const isActiveSub = active(path);
+            {children.map((listItem) => {
+              const { listTitle, listPath } = listItem;
+              const isActiveSub = active(listPath);
 
               return (
                 <ListItemStyle
-                  key={title}
+                  key={listTitle}
                   component={RouterLink}
-                  to={path}
+                  to={listPath}
                   sx={{
                     ...(isActiveSub && activeSubStyle)
-                  }}
-                >
+                  }}>
                   <ListItemIconStyle>
                     <Box
                       component="span"
@@ -116,7 +117,8 @@ function NavItem({ item, active }) {
                         alignItems: 'center',
                         justifyContent: 'center',
                         bgcolor: 'text.disabled',
-                        transition: (theme) => theme.transitions.create('transform'),
+                        transition: (transitionTheme) =>
+                          transitionTheme.transitions.create('transform'),
                         ...(isActiveSub && {
                           transform: 'scale(2)',
                           bgcolor: 'primary.main'
@@ -124,7 +126,7 @@ function NavItem({ item, active }) {
                       }}
                     />
                   </ListItemIconStyle>
-                  <ListItemText disableTypography primary={title} />
+                  <ListItemText disableTypography primary={listTitle} />
                 </ListItemStyle>
               );
             })}
@@ -140,22 +142,22 @@ function NavItem({ item, active }) {
       to={path}
       sx={{
         ...(isActiveRoot && activeRootStyle)
-      }}
-    >
+      }}>
       <ListItemIconStyle>{icon && icon}</ListItemIconStyle>
       <ListItemText disableTypography primary={title} />
       {info && info}
     </ListItemStyle>
   );
-}
-
-NavSection.propTypes = {
-  navConfig: PropTypes.array
 };
 
-export default function NavSection({ navConfig, ...other }) {
+NavItem.propTypes = {
+  item: PropTypes.object,
+  active: PropTypes.func
+};
+
+const NavSection = ({ navConfig, ...other }) => {
   const { pathname } = useLocation();
-  const match = (path) => (path ? !!matchPath({ path, end: false }, pathname) : false);
+  const match = (path) => (path ? Boolean(matchPath({ path, end: false }, pathname)) : false);
 
   return (
     <Box {...other}>
@@ -166,4 +168,10 @@ export default function NavSection({ navConfig, ...other }) {
       </List>
     </Box>
   );
-}
+};
+
+NavSection.propTypes = {
+  navConfig: PropTypes.array
+};
+
+export default NavSection;
